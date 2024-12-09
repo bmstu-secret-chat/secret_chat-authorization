@@ -1,6 +1,7 @@
 from django.conf import settings
 
 import redis
+from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
 redis_client = redis.StrictRedis(
@@ -26,6 +27,17 @@ def create_tokens(user_data):
         "refresh": str(refresh),
         "access": str(access),
     }
+
+
+def set_cookie(response: Response, access: str = None, refresh: str = None):
+    """
+    Устанвливает access и refresh токены в cookie.
+    """
+    if access:
+        response.set_cookie("access", access, httponly=True, secure=True)
+
+    if refresh:
+        response.set_cookie("refresh", refresh, httponly=True, secure=True)
 
 
 def is_token_blacklisted(token):

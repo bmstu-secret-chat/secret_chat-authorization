@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 
-from .utils import add_to_blacklist, create_tokens, is_token_blacklisted
+from .utils import add_to_blacklist, create_tokens, is_token_blacklisted, set_cookie
 
 env = environ.Env(
     BACKEND_URL=(str),
@@ -29,8 +29,7 @@ def register_view(request):
         tokens = create_tokens(user_data)
 
         response = Response({"user_id": user_data["id"]}, status=status.HTTP_201_CREATED)
-        response.set_cookie("access", tokens["access"], httponly=True, secure=True)
-        response.set_cookie("refresh", tokens["refresh"], httponly=True, secure=True)
+        set_cookie(response, tokens["access"], tokens["refresh"])
         return response
 
     return Response(response.json(), status=response.status_code)
@@ -50,8 +49,7 @@ def login_view(request):
         tokens = create_tokens(user_data)
 
         response = Response({"user_id": user_data["id"]}, status=status.HTTP_200_OK)
-        response.set_cookie("access", tokens["access"], httponly=True, secure=True)
-        response.set_cookie("refresh", tokens["refresh"], httponly=True, secure=True)
+        set_cookie(response, tokens["access"], tokens["refresh"])
         return response
 
     return Response(response.json(), status=response.status_code)
@@ -107,7 +105,7 @@ def check_view(request):
             new_access_token = refresh.access_token
 
             response = Response({"user_id": refresh["user_id"]})
-            response.set_cookie("access", str(new_access_token), httponly=True, secure=True)
+            set_cookie(response, str(new_access_token))
             return response
 
         except TokenError:
