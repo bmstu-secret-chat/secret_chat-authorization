@@ -68,7 +68,7 @@ def logout_view(request):
     if refresh_token:
         add_to_blacklist(refresh_token)
 
-    response = Response(status=status.HTTP_200_OK)
+    response = Response({}, status=status.HTTP_200_OK)
     response.delete_cookie("access")
     response.delete_cookie("refresh")
     return response
