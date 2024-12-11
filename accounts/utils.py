@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from django.conf import settings
 
 import redis
@@ -34,10 +36,10 @@ def set_cookie(response: Response, access: str = None, refresh: str = None):
     Устанвливает access и refresh токены в cookie.
     """
     if access:
-        response.set_cookie("access", access, httponly=True, secure=True)
+        response.set_cookie("access", access, httponly=True, secure=True, expires=datetime.now()+timedelta(minutes=5))
 
     if refresh:
-        response.set_cookie("refresh", refresh, httponly=True, secure=True)
+        response.set_cookie("refresh", refresh, httponly=True, secure=True, expires=datetime.now()+timedelta(days=7))
 
 
 def is_token_blacklisted(token):
