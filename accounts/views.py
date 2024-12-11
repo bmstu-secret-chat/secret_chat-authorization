@@ -16,7 +16,7 @@ BACKEND_URL = env("BACKEND_URL")
 
 
 @api_view(['POST'])
-def register_view(request):
+def signup_view(request):
     """
     Регистрация пользователя.
     """
