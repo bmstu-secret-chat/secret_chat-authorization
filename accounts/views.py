@@ -20,8 +20,8 @@ def signup_view(request):
     """
     Регистрация пользователя.
     """
-    url = f"{BACKEND_URL}/api/users/create/"
-    response = requests.post(url, json=request.data)
+    url = f"{BACKEND_URL}/users/create/"
+    response = requests.post(url, json=request.data, verify=False)
 
     if response.status_code == 201:
         data = response.json()
@@ -40,8 +40,8 @@ def login_view(request):
     """
     Логинит пользователя и устанавливает JWT токены в куки.
     """
-    url = f"{BACKEND_URL}/api/users/check/"
-    response = requests.post(url, data=request.data)
+    url = f"{BACKEND_URL}/users/check/"
+    response = requests.post(url, data=request.data, verify=False)
 
     if response.status_code == 200:
         data = response.json()
