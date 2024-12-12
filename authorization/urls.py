@@ -1,10 +1,5 @@
-from django.urls import path
-
-from accounts.views import check_view, login_view, logout_view, signup_view
+from django.urls import include, path
 
 urlpatterns = [
-    path("login/", login_view, name="login"),
-    path("logout/", logout_view, name="logout"),
-    path("signup/", signup_view, name="signup"),
-    path("check/", check_view, name="check"),
+    path("api/auth/", include("accounts.urls", namespace="auth")),
 ]
