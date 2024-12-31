@@ -13,3 +13,12 @@ services:
     ports:
       - "${PORT}:${PORT}"
     restart: always
+    depends_on:
+      - redis
+
+  redis:
+    image: "redis:latest"
+    container_name: redis
+    ports:
+      - "${REDIS_PORT}:${REDIS_PORT}"
+    restart: always
