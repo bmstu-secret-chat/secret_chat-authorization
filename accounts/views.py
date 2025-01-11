@@ -78,7 +78,7 @@ def check_view(request):
     """
     Проверяет токен и определяет пользователя.
     """
-    access_token = request.GET.get("access")
+    access_token = request.COOKIES.get("access")
 
     if not access_token:
         return Response({"error": "Access токен не предоставлен"}, status=status.HTTP_401_UNAUTHORIZED)
