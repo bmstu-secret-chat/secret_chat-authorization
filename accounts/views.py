@@ -112,12 +112,14 @@ def refresh_view(request):
     except TokenError:
         return Response({"error": "Refresh токен недействителен или истек"}, status=status.HTTP_401_UNAUTHORIZED)
 
-    new_access_token = str(refresh.access_token)
-    new_refresh_token = str(refresh)
+    user_id = refresh["user_id"]
+    username = refresh["username"]
+    user_data = {"id": user_id, "username": username}
+    tokens = create_tokens(user_data)
 
     add_to_blacklist(refresh_token)
 
     response = Response({}, status=status.HTTP_200_OK)
-    set_cookie(response, new_access_token, new_refresh_token)
+    set_cookie(response, tokens["access"], tokens["refresh"])
 
     return response
