@@ -91,7 +91,7 @@ def check_view(request):
         if not user_check:
             return Response({"error": "Пользователя с таким id не существует"}, status=status.HTTP_401_UNAUTHORIZED)
 
-        return Response({"user_id": user_id}, status=status.HTTP_200_OK)
+        return Response({"id": user_id}, status=status.HTTP_200_OK)
 
     except TokenError:
         return Response({"error": "Неверный access токен"}, status=status.HTTP_401_UNAUTHORIZED)
