@@ -76,7 +76,7 @@ def check_user_by_id(id):
 
     if response.status_code == 200:
         data = response.json()
-        user_id = data.get("user_id")
-        return user_id
+        user = data.get("user")
+        return user
 
     return Response(response.json(), status=response.status_code)
