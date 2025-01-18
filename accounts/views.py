@@ -30,7 +30,7 @@ def signup_view(request):
         user_data = data.get("user")
         tokens = create_tokens(user_data)
 
-        response = Response({"user_id": user_data["id"]}, status=status.HTTP_201_CREATED)
+        response = Response(user_data, status=status.HTTP_201_CREATED)
         set_cookie(response, tokens["access"], tokens["refresh"])
         return response
 
@@ -50,7 +50,7 @@ def login_view(request):
         user_data = data.get("user")
         tokens = create_tokens(user_data)
 
-        response = Response({"user_id": user_data["id"]}, status=status.HTTP_200_OK)
+        response = Response(user_data, status=status.HTTP_200_OK)
         set_cookie(response, tokens["access"], tokens["refresh"])
         return response
 
@@ -86,12 +86,12 @@ def check_view(request):
     try:
         token = AccessToken(access_token)
         user_id = token["user_id"]
-        user_check = check_user_by_id(user_id)
+        user = check_user_by_id(user_id)
 
-        if not user_check:
+        if not user:
             return Response({"error": "Пользователя с таким id не существует"}, status=status.HTTP_401_UNAUTHORIZED)
 
-        return Response({"id": user_id}, status=status.HTTP_200_OK)
+        return Response(user, status=status.HTTP_200_OK)
 
     except TokenError:
         return Response({"error": "Неверный access токен"}, status=status.HTTP_401_UNAUTHORIZED)
