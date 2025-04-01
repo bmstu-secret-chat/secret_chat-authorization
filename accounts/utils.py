@@ -8,20 +8,17 @@ import requests
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
-env = environ.Env(
-    NGINX_URL=(str),
-)
+env = environ.Env()
+
+INTERNAL_SECRET_KEY = env("INTERNAL_SECRET_KEY")
 
 NGINX_URL = env("NGINX_URL")
 
 BACKEND_PATH = "api/backend"
 
-redis_client = redis.StrictRedis(
-    host=settings.REDIS_HOST,
-    port=settings.REDIS_PORT,
-    db=1,
-    decode_responses=True
-)
+REALTIME_PATH = "api/realtime"
+
+redis_client = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=1, decode_responses=True)
 
 
 def create_tokens(user_data):
@@ -80,3 +77,30 @@ def check_user_by_id(id):
         return user
 
     return Response(response.json(), status=response.status_code)
+
+
+def get_private_key(user_id):
+    """
+    Получение приватного ключа пользователя.
+    """
+    url = f"{NGINX_URL}/{REALTIME_PATH}/messenger/private-key/"
+    headers = {"X-Internal-Secret": INTERNAL_SECRET_KEY}
+    params = {"user_id": user_id}
+    response = requests.get(url, headers=headers, params=params, verify=False)
+
+    if response.status_code == 200:
+        data = response.json()
+        private_key = data.get("private_key")
+        return private_key
+
+    return {"error": response.json(), "status": response.status_code}
+
+
+def update_count_auth(user_id, action):
+    """
+    Обновление счётчика авторизаций.
+    """
+    url = f"{NGINX_URL}/{BACKEND_PATH}/users/count-auth/"
+    headers = {"X-Internal-Secret": INTERNAL_SECRET_KEY}
+    data = {"user_id": user_id, "action": action}
+    requests.patch(url, headers=headers, data=data, verify=False)
