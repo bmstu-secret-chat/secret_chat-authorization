@@ -6,8 +6,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 
-from .utils import (add_to_blacklist, check_user_by_id, create_tokens, get_private_key, is_token_blacklisted,
-                    set_cookie, update_count_auth)
+from .utils import add_to_blacklist, check_user_by_id, create_tokens, is_token_blacklisted, set_cookie
 
 env = environ.Env()
 
@@ -29,7 +28,6 @@ def signup_view(request):
         user_data = data.get("user")
 
         response = Response(user_data, status=status.HTTP_201_CREATED)
-        update_count_auth(user_data["id"], "login")
         tokens = create_tokens(user_data)
         set_cookie(response, tokens["access"], tokens["refresh"])
         return response
@@ -42,34 +40,14 @@ def login_view(request):
     """
     Логинит пользователя и устанавливает JWT токены в куки.
     """
-    with_key = request.GET.get("with_key")
     url = f"{NGINX_URL}/{BACKEND_PATH}/users/check/"
     response = requests.post(url, data=request.data, verify=False)
 
     if response.status_code == 200:
         data = response.json()
         user_data = data.get("user")
+        response = Response({"user_info": user_data}, status=status.HTTP_200_OK)
 
-        if with_key:
-            if user_data["count_auth"] != 0:
-                if not user_data["is_online"]:
-                    return Response(
-                        {"error": "Нельзя получить ключ, так как пользователь не онлайн"},
-                        status=status.HTTP_409_CONFLICT,
-                    )
-
-                private_key = get_private_key(user_data["id"])
-
-                if isinstance(private_key, dict):
-                    return Response(private_key["error"], status=private_key["status"])
-
-                response = Response({"user_info": user_data, "private_key": private_key}, status=status.HTTP_200_OK)
-            else:
-                response = Response({"user_info": user_data}, status=status.HTTP_200_OK)
-        else:
-            response = Response({"user_info": user_data}, status=status.HTTP_200_OK)
-
-        update_count_auth(user_data["id"], "login")
         tokens = create_tokens(user_data)
         set_cookie(response, tokens["access"], tokens["refresh"])
         return response
@@ -85,9 +63,6 @@ def logout_view(request):
     refresh_token = request.COOKIES.get("refresh")
 
     if refresh_token:
-        refresh = RefreshToken(refresh_token)
-        user_id = refresh["user_id"]
-        update_count_auth(user_id, "logout")
         add_to_blacklist(refresh_token)
 
     response = Response({}, status=status.HTTP_200_OK)
