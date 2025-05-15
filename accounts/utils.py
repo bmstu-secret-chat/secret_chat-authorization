@@ -46,7 +46,7 @@ def set_cookie(response: Response, access: str = None, refresh: str = None):
     Устанвливает access и refresh токены в cookie.
     """
     if access:
-        response.set_cookie("access", access, secure=True, expires=datetime.now()+timedelta(minutes=5))
+        response.set_cookie("access", access, secure=True, expires=datetime.now()+timedelta(hours=1))
 
     if refresh:
         response.set_cookie("refresh", refresh, httponly=True, secure=True, expires=datetime.now()+timedelta(days=7))
