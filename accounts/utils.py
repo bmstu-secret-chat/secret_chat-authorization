@@ -37,7 +37,7 @@ def send_verify_code_mail(email):
     Отправка кода подтверждения.
     """
     code = generate_verification_code(email)
-    subject = "Код подтверждения регистрации в SafeChat"
+    subject = "Регистрация в SafeChat"
     message = f"Ваш код подтверждения: {code}"
     from_email = settings.EMAIL_FROM
     recipient_list = [email]
