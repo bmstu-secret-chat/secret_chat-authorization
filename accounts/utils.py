@@ -9,6 +9,7 @@ from django.template.loader import render_to_string
 import environ
 import redis
 import requests
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -45,14 +46,17 @@ def send_verify_code_mail(email):
 
 
 def check_code(email, code):
+    """
+    Проверка кода.
+    """
     cache_key = f"verify_email:{email}"
     stored_code = cache.get(cache_key)
 
     if not stored_code:
-        return Response({"error": "Код подтверждения истёк"})
+        return Response({"error": "Код подтверждения истёк"}, status=status.HTTP_400_BAD_REQUEST)
 
     if code != stored_code:
-        return Response({"error": "Неверный код подтверждения"})
+        return Response({"error": "Неверный код подтверждения"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 def create_tokens(user_data):
