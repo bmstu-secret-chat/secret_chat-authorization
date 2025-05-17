@@ -35,7 +35,7 @@ def signup_view(request):
     """
     Регистрация пользователя.
     """
-    email = request.data.get("email")
+    email = request.data.get("user").get("email")
     code = request.data.get("code")
 
     if not email:
@@ -49,7 +49,7 @@ def signup_view(request):
         return code_error
 
     url = f"{NGINX_URL}/{BACKEND_PATH}/users/create/"
-    response = requests.post(url, json=request.data, verify=False)
+    response = requests.post(url, json=request.data.get("user"), verify=False)
 
     if response.status_code == 201:
         data = response.json()
