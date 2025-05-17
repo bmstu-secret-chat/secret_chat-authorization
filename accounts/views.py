@@ -6,11 +6,10 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 
-from .utils import add_to_blacklist, check_user_by_id, create_tokens, is_token_blacklisted, set_cookie
+from .utils import (add_to_blacklist, check_code, check_user_by_id, create_tokens, is_token_blacklisted,
+                    send_verify_code_mail, set_cookie)
 
-env = environ.Env(
-    NGINX_URL=(str),
-)
+env = environ.Env()
 
 NGINX_URL = env("NGINX_URL")
 
@@ -18,10 +17,37 @@ BACKEND_PATH = "api/backend"
 
 
 @api_view(['POST'])
+def code_view(request):
+    """
+    Отправка кода подтверждения почты.
+    """
+    email = request.data.get("email")
+
+    if not email:
+        return Response({"error": "email обязательное поле"}, status=status.HTTP_400_BAD_REQUEST)
+
+    send_verify_code_mail(email)
+    return Response({}, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
 def signup_view(request):
     """
     Регистрация пользователя.
     """
+    email = request.data.get("email")
+    code = request.data.get("code")
+
+    if not email:
+        return Response({"error": "email обязательное поле"}, status=status.HTTP_400_BAD_REQUEST)
+
+    if not code:
+        return Response({"error": "code обязательное поле"}, status=status.HTTP_400_BAD_REQUEST)
+
+    code_error = check_code(email, code)
+    if code_error:
+        return code_error
+
     url = f"{NGINX_URL}/{BACKEND_PATH}/users/create/"
     response = requests.post(url, json=request.data, verify=False)
 

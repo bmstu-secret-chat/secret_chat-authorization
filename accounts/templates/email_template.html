@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>SafeChat - Подтверждение почты</title>
+    <style type="text/css">
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #0A0A0A;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        color: #FFFFFF;
+      }
+      .main-table {
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #1D1D1D;
+        border-radius: 12px;
+        overflow: hidden;
+      }
+      .content-block {
+        padding: 20px;
+      }
+      .logo {
+        display: block;
+        text-align: center;
+        padding-top: 30px;
+      }
+      .logo img {
+        height: 40px;
+        width: auto;
+      }
+      .header {
+        font-size: 32px;
+        font-weight: 600;
+        text-align: center;
+        margin-bottom: 30px;
+        color: #FFFFFF;
+      }
+      .title {
+        font-size: 24px;
+        font-weight: 600;
+        text-align: center;
+        margin-bottom: 30px;
+        color: #FFFFFF;
+      }
+      .text {
+        font-size: 15px;
+        line-height: 24px;
+        color: #D1D5DB;
+        margin-bottom: 24px;
+      }
+      .code-block {
+        background: #2D2D2D;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 30px 0;
+        text-align: center;
+      }
+      .code {
+        font-size: 32px;
+        font-weight: 600;
+        letter-spacing: 4px;
+        color: #FFFFFF;
+        font-family: monospace;
+      }
+      .divider {
+        height: 1px;
+        background: #333333;
+        margin: 30px 0;
+      }
+      .footer {
+        font-size: 12px;
+        color: #9CA3AF;
+        text-align: center;
+        padding-top: 20px;
+      }
+      .footer a{
+        all: unset;
+        font-size: 16px;
+        text-decoration: underline;
+        cursor: pointer;
+      }
+      .warning {
+        background: rgba(239, 68, 68, 0.1);
+        border-left: 4px solid #EF4444;
+        padding: 12px 16px;
+        border-radius: 4px;
+        margin: 24px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <table
+      class="main-table"
+      cellpadding="0"
+      cellspacing="0"
+      border="0"
+      align="center"
+    >
+      <tr>
+        <td>
+          <a class="logo" href="https://safe-chat.ru" target="_blank">
+            <img
+              src="https://safe-chat.ru/_next/static/media/safe-chat.3f227610.png"
+              alt="SafeChat"
+            />
+          </a>
+
+          <div class="content-block">
+            <h1 class="header">SafeChat</h1>
+            <h2 class="title">Подтверждение почты</h2>
+
+            <p class="text">Здравствуйте!</p>
+
+            <p class="text">
+              Для завершения регистрации в SafeChat введите следующий код подтверждения:
+            </p>
+
+            <div class="code-block">
+              <div class="code">{{ code }}</div>
+            </div>
+
+            <div class="warning">
+              <p class="text" style="color: #FCA5A5; margin: 0;">
+                Этот код действителен в течение 5 минут. Никому не сообщайте этот код.
+              </p>
+            </div>
+
+            <p class="text">
+              Если вы не запрашивали этот код, пожалуйста, проигнорируйте это письмо.
+            </p>
+
+            <div class="divider"></div>
+
+            <p class="text">С уважением,<br />Команда SafeChat</p>
+          </div>
+
+          <div class="footer">
+            <a href="https://safe-chat.ru" target="_blank">SafeChat</a>
+            <p>© 2025 SafeChat. Все права защищены.</p>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
