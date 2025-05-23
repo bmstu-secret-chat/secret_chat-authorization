@@ -28,7 +28,7 @@ def generate_verification_code(email):
     """
     code = str(secrets.randbelow(1_000_000)).zfill(6)
     cache_key = f"verify_email:{email}"
-    cache.set(cache_key, code, timeout=300)
+    cache.set(cache_key, code, timeout=180)
     return code
 
 
