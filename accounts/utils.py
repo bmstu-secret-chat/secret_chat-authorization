@@ -1,27 +1,62 @@
+import secrets
 from datetime import datetime, timedelta
 
 from django.conf import settings
+from django.core.cache import cache
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
 
 import environ
 import redis
 import requests
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
-env = environ.Env(
-    NGINX_URL=(str),
-)
+env = environ.Env()
 
 NGINX_URL = env("NGINX_URL")
 
 BACKEND_PATH = "api/backend"
 
-redis_client = redis.StrictRedis(
-    host=settings.REDIS_HOST,
-    port=settings.REDIS_PORT,
-    db=1,
-    decode_responses=True
-)
+redis_client = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=1, decode_responses=True)
+
+
+def generate_verification_code(email):
+    """
+    Генерация кода верификации.
+    """
+    code = str(secrets.randbelow(1_000_000)).zfill(6)
+    cache_key = f"verify_email:{email}"
+    cache.set(cache_key, code, timeout=180)
+    return code
+
+
+def send_verify_code_mail(email):
+    """
+    Отправка кода подтверждения.
+    """
+    code = generate_verification_code(email)
+    subject = "Регистрация в Safechat"
+    message = f"Ваш код подтверждения: {code}"
+    from_email = settings.EMAIL_FROM
+    recipient_list = [email]
+    html_message = render_to_string("email_template.html", {"code": code})
+    send_mail(subject, message, from_email, recipient_list, html_message=html_message)
+
+
+def check_code(email, code):
+    """
+    Проверка кода.
+    """
+    cache_key = f"verify_email:{email}"
+    stored_code = cache.get(cache_key)
+
+    if not stored_code:
+        return Response({"error": "Код подтверждения истёк"}, status=status.HTTP_400_BAD_REQUEST)
+
+    if code != stored_code:
+        return Response({"error": "Неверный код подтверждения"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 def create_tokens(user_data):
